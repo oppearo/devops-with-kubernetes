@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
         - name: todo-app
-          image: oppearo/todo-app-go:latest
+          image: oppearo/todo-app-go@sha256:0f49a823a69d125eab973e8b7cd462c2523ec30f7aa7bdd1e7db96af77cca876
           imagePullPolicy: IfNotPresent
           env:
             - name: PORT
-              value: "3000"
+              value: "3001"
