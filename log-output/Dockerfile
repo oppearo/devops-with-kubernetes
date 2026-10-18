@@ -17,6 +17,7 @@ FROM gcr.io/distroless/base-debian12 AS build-release-stage
 
 WORKDIR /
 
+# nimi on vanha, teinkin uuden kansion todo-appille
 COPY --from=builder /todo-app /todo-app
 
 CMD ["/todo-app"]
