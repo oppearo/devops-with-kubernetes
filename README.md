@@ -6,3 +6,4 @@ This repository is for returning assignments for the MOOC.fi [DevOps with Kubern
 ### Chapter 2
 
 - [1.1.](https://github.com/oppearo/devops-with-kubernetes/tree/1.1/log-output)
+- [1.2.](https://github.com/oppearo/devops-with-kubernetes/tree/1.2/todo-app)
