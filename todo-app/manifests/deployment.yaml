@@ -16,3 +16,6 @@ spec:
         - name: todo-app
           image: oppearo/todo-app-go:latest
           imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "8080"
