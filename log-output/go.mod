@@ -1,4 +1,4 @@
-module github.com/oppearo/devops-with-kubernetes
+module github.com/oppearo/devops-with-kubernetes/log-output
 
 go 1.25.7
 
