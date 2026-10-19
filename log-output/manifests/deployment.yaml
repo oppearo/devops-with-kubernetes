@@ -12,11 +12,24 @@ spec:
       labels:
         app: log-output
     spec:
+      volumes:
+        - name: shared-volume
+          emptyDir: {}
       containers:
-        - name: log-output
-          image: oppearo/log-output@sha256:622931945d6d183e54d1018b49e14333a4bd2c65cd24b86ef7201280a5b60242
+        - name: log-output-generator
+          image: oppearo/log-output@sha256:2512ce9e4309fb287ad441e161907e7996d6fd6a0fd451b91ed6efe2166c51b2
+          command: ["/bin/generator"]
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: shared-volume
+              mountPath: /shared
+        - name: log-output-contentserver
+          image: oppearo/log-output@sha256:2512ce9e4309fb287ad441e161907e7996d6fd6a0fd451b91ed6efe2166c51b2
+          command: ["/bin/contentserver"]
           imagePullPolicy: IfNotPresent
           env:
             - name: PORT
               value: "3000"
-
+          volumeMounts:
+            - name: shared-volume
+              mountPath: /shared

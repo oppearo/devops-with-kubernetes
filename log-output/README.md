@@ -1,43 +1,41 @@
 # Log output app
 
-Create with:
+## Create container
+
+Test locally with the following steps:
 
 ```bash
-docker build --tag oppearo/log-output
+docker build --tag oppearo/log-output .
+docker volume create log-data
+docker run --rm -d --name generator -v log-data:/shared log-output /bin/generator
+docker run --rm -d --name server 5000:5000 -v log-data:/shared log-output /bin/server
+curl http://localhost:5000/status
 ```
 
-Import into default cluster and create deployment:
+Push to Docker Hub:
 
 ```bash
-k3d image import oppearo/log-output
-kubectl create deployment hashgenerator-dep --image=oppearo/log-output
-# I did locally so edited imagePullPolicy of deployment
-kubectl edit deployment hashgenerator-dep
-
-$ kubectl get pods                             NAME                                 READY   STATUS    RESTARTS   AGE
-hashgenerator-dep-56b76cf5fd-dkb7b   1/1     Running   0          6s
+docker push oppearo/log-output
 ```
 
-And output in logs:
+See `manifests/deployment.yaml` for configuring the shared volume for two containers in a pod.
+
+## Example outputs
+
+In (localhost:8081/status)[http://localhost:8081/status]
+
+`2026-10-19T15:48:04Z: 98bac9c6-01e8-47c4-b4c8-d10fd2125b09`
+
+And output from curl and kubectl logs for the pod:
 
 ```bash
-kubectl logs -f hashgenerator-dep-56b76cf5fd-dkb7b
-2026-09-21T19:16:41Z: d2d3da9f-09c4-497f-83e5-1ade8e100bb2
-2026-09-21T19:16:46Z: d2d3da9f-09c4-497f-83e5-1ade8e100bb2
-2026-09-21T19:16:50Z: d2d3da9f-09c4-497f-83e5-1ade8e100bb2
-2026-09-21T19:16:55Z: d2d3da9f-09c4-497f-83e5-1ade8e100bb2
-2026-09-21T19:17:00Z: d2d3da9f-09c4-497f-83e5-1ade8e100bb2
-2026-09-21T19:17:05Z: d2d3da9f-09c4-497f-83e5-1ade8e100bb2
-2026-09-21T19:17:10Z: d2d3da9f-09c4-497f-83e5-1ade8e100bb2
-2026-09-21T19:17:15Z: d2d3da9f-09c4-497f-83e5-1ade8e100bb2
-2026-09-21T19:17:19Z: d2d3da9f-09c4-497f-83e5-1ade8e100bb2
-2026-09-21T19:17:24Z: d2d3da9f-09c4-497f-83e5-1ade8e100bb2
-2026-09-21T19:17:29Z: d2d3da9f-09c4-497f-83e5-1ade8e100bb2
-2026-09-21T19:17:34Z: d2d3da9f-09c4-497f-83e5-1ade8e100bb2
-2026-09-21T19:17:39Z: d2d3da9f-09c4-497f-83e5-1ade8e100bb2
-2026-09-21T19:17:44Z: d2d3da9f-09c4-497f-83e5-1ade8e100bb2
-2026-09-21T19:17:48Z: d2d3da9f-09c4-497f-83e5-1ade8e100bb2
-2026-09-21T19:17:53Z: d2d3da9f-09c4-497f-83e5-1ade8e100bb2
-2026-09-21T19:17:58Z: d2d3da9f-09c4-497f-83e5-1ade8e100bb2
-2026-09-21T19:18:03Z: d2d3da9f-09c4-497f-83e5-1ade8e100bb2
+❯ curl localhost:8081/status
+2026-10-19T15:48:04Z: 98bac9c6-01e8-47c4-b4c8-d10fd2125b09
+
+❯ kubectl logs log-output-dep-8499f658b7-bbjpg
+Defaulted container "log-output-generator" out of: log-output-generator, log-output-contentserver
+2026-10-19T15:47:49Z: 98bac9c6-01e8-47c4-b4c8-d10fd2125b09
+2026-10-19T15:47:54Z: 98bac9c6-01e8-47c4-b4c8-d10fd2125b09
+2026-10-19T15:47:59Z: 98bac9c6-01e8-47c4-b4c8-d10fd2125b09
+2026-10-19T15:48:04Z: 98bac9c6-01e8-47c4-b4c8-d10fd2125b09
 ```
